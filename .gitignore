@@ -14,4 +14,4 @@ ENV/
 *.swo
 
 # Project specific
-kanji_data.json 
+# kanji_data.json 

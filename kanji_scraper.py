@@ -91,26 +91,37 @@ class KanjiScraper:
             return []
 
     def scrape_all_levels(self):
-        # 테스트를 위해 첫 번째 레벨만 스크랩
+        # 웹사이트의 실제 레벨 구조에 맞게 수정
         levels = {
-            "레벨 1 (JLPT N5)": range(1, 2)  # 1-1만 스크랩
+            "레벨 1 (JLPT N5)": range(1, 25),      # 1-1부터 1-24까지
+            "레벨 2 (JLPT N5-N4)": range(1, 25),   # 2-1부터 2-24까지
+            "레벨 3 (JLPT N5-N3)": range(1, 25),   # 3-1부터 3-24까지
+            "레벨 4 (JLPT N4-N2)": range(1, 25),   # 4-1부터 4-24까지
+            "레벨 5 (JLPT N3-N1)": range(1, 25),   # 5-1부터 5-24까지
+            "레벨 6 (JLPT N2-N1)": range(1, 25)    # 6-1부터 6-24까지
         }
 
         try:
             for level_name, sublevels in levels.items():
                 level_num = int(level_name.split()[1])
                 self.kanji_data[level_name] = {}
+                print(f"\n=== {level_name} 스크래핑 시작 ===")
                 
                 for sublevel in sublevels:
+                    print(f"\n=== 스크래핑 시작: 레벨 {level_num}-{sublevel} ===")
                     kanji_list = self.get_kanji_list(level_num, sublevel)
                     if kanji_list:
                         self.kanji_data[level_name][f"레벨 {level_num}-{sublevel}"] = kanji_list
                         self.save_to_json()  # 각 서브레벨마다 저장
-                        print(f"Successfully scraped Level {level_num}-{sublevel}")
+                        print(f"=== 성공적으로 스크랩 완료: 레벨 {level_num}-{sublevel} ===\n")
                     else:
-                        print(f"No data found for Level {level_num}-{sublevel}")
+                        print(f"=== 데이터를 찾을 수 없음: 레벨 {level_num}-{sublevel} ===\n")
+                        # 데이터가 없는 경우 해당 레벨의 스크래핑 중단
+                        break
                     
-                    time.sleep(1)  # 서버 부하 방지
+                    time.sleep(2)  # 서버 부하 방지를 위해 대기 시간 증가
+                
+                print(f"=== {level_name} 스크래핑 완료 ===\n")
         finally:
             input("Press Enter to close the browser...")  # 브라우저를 바로 닫지 않고 대기
             self.driver.quit()  # 브라우저 종료
